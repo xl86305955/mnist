@@ -1,11 +1,11 @@
 CC := gcc
-CFLAGS := -lm -g 
+CFLAGS := -g 
 OBJECT := main.c common.h mnist.h init_network.h activation.h forward.h backward.h loss.h
 
 all:test
 
 test: $(OBJECT)
-	$(CC) $(CFLAGS) -o test $(OBJECT)
+	$(CC) $(CFLAGS) -o test $(OBJECT) -lm
 
 loss.o: loss.c common.h
 	$(CC) -c loss.c
