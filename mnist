@@ -1,0 +1,74 @@
+#include <math.h>
+#include "common.h"
+#include "init_network.h"
+#include "activation.h"
+/*
+#define BATCH_SIZE 100
+
+float out1[BATCH_SIZE][HIDDEN_SIZE];
+float out2[BATCH_SIZE][OUTPUT_SIZE];
+*/
+
+void L1_forward(double image[][SIZE]) {
+	printf("====================> Forward to layer 1.....\n");
+	int i = 0;
+	int j = 0;
+	int k = 0;
+	for (k = 0; k < BATCH_SIZE; k++) {
+		for (i = 0; i < HIDDEN_SIZE; i++) {
+			for (j = 0; j < SIZE; j++) {
+				out1[k][i] += image[k][j] * layer1.w1[j][i];
+			}	
+			out1[k][i] += layer1.b1[i];
+			out1[k][i] = relu(out1[k][i]);
+		//printf("%f\n", out1[i]);
+		}
+	}
+}
+ 
+void L2_forward(float out1[][HIDDEN_SIZE]) {
+	printf("====================> Forward to layer 2.....\n");
+	int i = 0;
+	int j = 0;
+	int k = 0;
+	for (k = 0; k < BATCH_SIZE; k++) {
+		for (i = 0; i < OUTPUT_SIZE; i++) {
+			for (j = 0; j < HIDDEN_SIZE; j++) {
+				out2[k][i] += out1[k][j] * layer2.w2[j][i]; 
+			}	
+			out2[k][i] += layer2.b2[i];
+		}
+		softmax(out2[k]);
+	}
+/*
+	for(i=0; i<10;i++) 
+		printf("%f\n", out2[1][i]);
+*/
+}
+
+float batch_cross_entropy(int one_hot_label[][10]) {
+        int i = 0;
+        int j = 0;
+        int k = 0;
+        float loss[BATCH_SIZE];
+        float batch_loss = 0;
+		float f_label [BATCH_SIZE][10];
+        for (k = 0; k < BATCH_SIZE; k++) {
+        	for (i = 0; i < OUTPUT_SIZE; i++) {
+				f_label[k][i] = (float) one_hot_label[k][i];
+				loss[k] = log(out2[k][i]) * f_label[k][i];
+				printf("out2[k][i]%f\t log(out2)%lf\n", log((float)out2[k][i]));
+			}
+		
+			//printf("%f\n", loss[k]);
+			//batch_loss += loss[k];
+        }
+		for (i = 0; i < 10; i++)
+			printf("%f\n", log((double)out2[11][i]));
+		printf("%f\n", loss[11]);
+
+        batch_loss /= -BATCH_SIZE;
+        return batch_loss;
+}
+
+
